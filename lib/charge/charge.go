@@ -36,7 +36,7 @@ type (
 
 func InitCharge(conf *config.Config) *Charge {
 	c = &Charge{
-		url:       conf.ChargeApiUrl,
+		url:       conf.ChargeBackUrl,
 		serviceId: conf.ServiceId,
 	}
 	return c
@@ -61,13 +61,13 @@ func (c *Charge) UseQuota(ctx *gin.Context, userId string, amount float64) bool 
 	if err := json.Unmarshal(body, &resp); err != nil {
 		fmt.Printf("Error unmarshal %+v\n", err)
 	}
-	if resp_.Status != "200 OK" {
+	if resp_.StatusCode != 200 {
 		fmt.Printf("Error using quota: %s\n", resp_.Status)
-		ctx.JSON(http.StatusBadRequest, resp)
+		ctx.JSON(resp_.StatusCode, resp)
 		return false
 	}
 	if resp.Status != consts.OK {
-		ctx.JSON(http.StatusBadRequest, resp)
+		ctx.JSON(resp_.StatusCode, resp)
 		return false
 	}
 	return true
@@ -92,9 +92,9 @@ func (c *Charge) EnsureQuota(ctx *gin.Context, userId string, amount float64) bo
 	if err := json.Unmarshal(body, &resp); err != nil {
 		fmt.Printf("Error unmarshal %+v\n", err)
 	}
-	if resp_.Status != "200 OK" {
+	if resp_.StatusCode != 200 {
 		fmt.Printf("Error checking quota: %s\n", resp_.Status)
-		ctx.JSON(http.StatusBadRequest, resp)
+		ctx.JSON(resp_.StatusCode, resp)
 		return false
 	}
 	if resp.Status != consts.OK {
@@ -102,7 +102,7 @@ func (c *Charge) EnsureQuota(ctx *gin.Context, userId string, amount float64) bo
 		return false
 	}
 	if resp.RemainQuota < amount {
-		ctx.JSON(http.StatusBadRequest, resp)
+		ctx.JSON(http.StatusPaymentRequired, resp)
 		return false
 	}
 	return true

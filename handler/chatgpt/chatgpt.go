@@ -15,7 +15,7 @@ type (
 		Chrg   *charge.Charge
 	}
 	ChatGptReq struct {
-		UserId string                         `json:"user_id"`
+		UserId string                         `json:"userId"`
 		Prompt []openai.ChatCompletionMessage `json:"prompt"`
 	}
 )
@@ -42,6 +42,7 @@ func (c *ChatGpt) Handle(e *gin.Engine) {
 		if err != nil {
 			fmt.Printf("ChatCompletion error: %v\n", err)
 		}
+		fmt.Println(resp.Usage.TotalTokens)
 		ctx.JSON(http.StatusAccepted, resp.Choices[0].Message.Content)
 	})
 }
