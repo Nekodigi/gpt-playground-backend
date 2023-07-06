@@ -9,6 +9,8 @@ import (
 
 type Config struct {
 	ChatGPTToken string
+	ChargeApiUrl string
+	ServiceId    string
 }
 
 var config *Config
@@ -27,6 +29,8 @@ func Load() *Config {
 
 		config = &Config{
 			ChatGPTToken: os.Getenv("CHATGPT_TOKEN"),
+			ChargeApiUrl: os.Getenv("CHARGE_API_URL"),
+			ServiceId:    os.Getenv("SERVICE_ID"),
 		}
 	}
 	return config

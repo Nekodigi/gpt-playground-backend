@@ -5,19 +5,21 @@ import (
 
 	"github.com/Nekodigi/gpt-playground-backend/config"
 	"github.com/Nekodigi/gpt-playground-backend/handler/chatgpt"
+	"github.com/Nekodigi/gpt-playground-backend/lib/charge"
 	"github.com/gin-gonic/gin"
 	"github.com/sashabaranov/go-openai"
 )
 
 var (
 	openaiClient *openai.Client
+	chrg         *charge.Charge
 )
 
 func init() {
 	conf := config.Load()
 
 	openaiClient = openai.NewClient(conf.ChatGPTToken)
-
+	chrg = charge.InitCharge(conf)
 }
 
 func CORSMiddleware() gin.HandlerFunc {
@@ -38,6 +40,6 @@ func CORSMiddleware() gin.HandlerFunc {
 
 func Router(e *gin.Engine) {
 	e.Use(CORSMiddleware())
-	(&chatgpt.ChatGpt{OpenAI: openaiClient}).Handle(e)
+	(&chatgpt.ChatGpt{OpenAI: openaiClient, Chrg: chrg}).Handle(e)
 	e.GET("/ping", func(ctx *gin.Context) { ctx.String(http.StatusOK, "pong") })
 }
