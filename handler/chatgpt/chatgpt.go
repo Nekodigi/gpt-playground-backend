@@ -29,6 +29,7 @@ func (c *ChatGpt) Handle(e *gin.Engine) {
 		if err != nil {
 			fmt.Printf("ChatCompletion error: %v\n", err)
 		}
+		fmt.Println(resp.Usage.TotalTokens)
 		ctx.JSON(http.StatusAccepted, resp.Choices[0].Message.Content)
 	})
 }
