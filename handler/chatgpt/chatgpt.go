@@ -15,7 +15,7 @@ type (
 		Chrg   *charge.Charge
 	}
 	ChatGptReq struct {
-		UserId string                         `json:"user_id"`
+		UserId string                         `json:"userId"`
 		Prompt []openai.ChatCompletionMessage `json:"prompt"`
 	}
 )
